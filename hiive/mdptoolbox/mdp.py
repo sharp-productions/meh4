@@ -1512,7 +1512,7 @@ class ValueIteration(MDP):
             self._boundIter(epsilon)
             # computation of threshold of variation for V for an epsilon-
             # optimal policy
-            self.thresh = epsilon * (1 - self.gamma) / self.gamma
+            self.thresh = epsilon
         else:  # discount == 1
             # threshold of variation for V for an epsilon-optimal policy
             self.thresh = epsilon
