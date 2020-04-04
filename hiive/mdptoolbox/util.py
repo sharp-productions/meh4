@@ -303,9 +303,5 @@ def check(P, R):
 
 
 def getSpan(array):
-    """Return the span of `array`
-
-    span(array) = max array(s) - min array(s)
-
-    """
-    return array.max() - array.min()
+    
+    return array.abs().max()
