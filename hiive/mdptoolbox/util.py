@@ -304,4 +304,4 @@ def check(P, R):
 
 def getSpan(array):
     
-    return array.abs().max()
+    return _np.absolute(array).max()
