@@ -1121,6 +1121,7 @@ class QLearning(MDP):
         self.v_mean = []
         self.p_cumulative = []
         self.iter_callback = iter_callback
+        self.S_freq = np.zeros((self.S, self.A))
         self.run_stat_frequency = max(1, self.max_iter // 10000) if run_stat_frequency is None else run_stat_frequency
 
     def run(self):
@@ -1188,6 +1189,7 @@ class QLearning(MDP):
             p = self.Q.argmax(axis=1)
             self.policy = p
 
+            self.S_freq[s,a] += 1
             run_stats.append(self._build_run_stat(i=n, s=s, a=a, r=r, p=p, v=v, error=error))
 
             if take_run_stat:
