@@ -811,6 +811,7 @@ class PolicyIteration(MDP):
             'Reward': r,
             'Error': error,
             'Time': _time.time() - self.time,
+            'V[0]': v[0],
             'Max V': _np.max(v),
             'Mean V': _np.mean(v),
             'Iteration': i,
