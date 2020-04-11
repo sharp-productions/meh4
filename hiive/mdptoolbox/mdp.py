@@ -1252,6 +1252,7 @@ class QLearning(MDP):
             'Alpha': self.alpha,
             'Epsilon': self.epsilon,
             'Gamma': self.gamma,
+            'V[0]': v[0],
             'Max V': _np.max(v),
             'Mean V': _np.mean(v),
             'Iteration': i,
