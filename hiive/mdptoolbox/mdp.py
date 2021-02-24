@@ -811,6 +811,7 @@ class PolicyIteration(MDP):
             'Reward': r,
             'Error': error,
             'Time': _time.time() - self.time,
+            'V[0]': v[0],
             'Max V': _np.max(v),
             'Mean V': _np.mean(v),
             'Iteration': i,
@@ -1121,6 +1122,7 @@ class QLearning(MDP):
         self.v_mean = []
         self.p_cumulative = []
         self.iter_callback = iter_callback
+        self.S_freq = _np.zeros((self.S, self.A))
         self.run_stat_frequency = max(1, self.max_iter // 10000) if run_stat_frequency is None else run_stat_frequency
 
     def run(self):
@@ -1188,6 +1190,7 @@ class QLearning(MDP):
             p = self.Q.argmax(axis=1)
             self.policy = p
 
+            self.S_freq[s,a] += 1
             run_stats.append(self._build_run_stat(i=n, s=s, a=a, r=r, p=p, v=v, error=error))
 
             if take_run_stat:
@@ -1249,6 +1252,7 @@ class QLearning(MDP):
             'Alpha': self.alpha,
             'Epsilon': self.epsilon,
             'Gamma': self.gamma,
+            'V[0]': v[0],
             'Max V': _np.max(v),
             'Mean V': _np.mean(v),
             'Iteration': i,
@@ -1512,7 +1516,7 @@ class ValueIteration(MDP):
             self._boundIter(epsilon)
             # computation of threshold of variation for V for an epsilon-
             # optimal policy
-            self.thresh = epsilon * (1 - self.gamma) / self.gamma
+            self.thresh = epsilon
         else:  # discount == 1
             # threshold of variation for V for an epsilon-optimal policy
             self.thresh = epsilon
