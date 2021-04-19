@@ -420,7 +420,7 @@ def openai(env_name:str, render:bool=False, **kwargs):
     Parameters
     ---------
     env_name : str
-        The name of the Open AI gy environment to model. 
+        The name of the Open AI gym environment to model. 
     render : bool 
         Flag to render the environment via gym's `render()` function. 
     
