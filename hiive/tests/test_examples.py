@@ -202,3 +202,9 @@ class TestExampleRand(object):
         P, R = mdptoolbox.example.rand(S=self.S, A=self.A, mask=mask,
                                        is_sparse=True)
         assert_is_none(mdptoolbox.util.check(P, R))
+
+    def test_openai_gym(self):
+        P, R = mdptoolbox.example.openai("Taxi-v3")
+        assert_is_none(P)
+        assert_is_none(R)
+
