@@ -14,7 +14,8 @@ Available functions
     A random example
 :func:`~mdptoolbox.example.small`
     A very small example
-
+:func:`~mdptoolbox.example.openai`
+    A discrete OpenAI Gym environment
 """
 
 # Copyright (c) 2011-2014 Steven A. W. Cordwell
@@ -48,6 +49,7 @@ Available functions
 
 import numpy as _np
 import scipy.sparse as _sp
+from . import openai as openai_
 
 
 def forest(S=3, r1=4, r2=2, p=0.1, is_sparse=False):
@@ -402,3 +404,62 @@ def small():
     P = _np.array([[[0.5, 0.5], [0.8, 0.2]], [[0, 1], [0.1, 0.9]]])
     R = _np.array([[5, 10], [-1, 2]])
     return P, R
+
+def openai(env_name:str, render:bool=False, **kwargs):
+    """
+    Generate a MDPToolbox-formatted version of a *discrete* OpenAI Gym environment. 
+
+    You can find the list of available gym environments here: https://gym.openai.com/envs/#classic_control
+
+    You'll have to look at the source code of the environments for available kwargs; as it is not well documented.  
+
+    This function is used to generate a transition probability
+    (``A`` × ``S`` × ``S``) array ``P`` and a reward (``S`` × ``A``) matrix
+    ``R``.
+
+    Parameters
+    ---------
+    env_name : str
+        The name of the Open AI gym environment to model. 
+    render : bool 
+        Flag to render the environment via gym's `render()` function. 
+    
+    Returns
+    -------
+    out : tuple
+        ``out[0]`` contains the transition probability matrix P  and ``out[1]``
+        contains the reward matrix R. 
+    Examples
+    --------
+    >>> import hiive.mdptoolbox.example
+    >>> from gym.envs.toy_text.frozen_lake import generate_random_map
+    >>> random_map = generate_random_map(size=10, p=0.98)
+    >>> P, R = hiive.mdptoolbox.example.openai("FrozenLake-v0", desc=random_map)
+    >>> P
+    array([[[0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+        [0., 0., 0., ..., 0., 0., 0.],
+    <BLANKLINE> 
+        [0., 0., 0., ..., 1., 0., 0.],
+        [0., 0., 0., ..., 0., 1., 0.],
+        [0., 0., 0., ..., 0., 0., 1.]]])
+    >>> R
+    array([[ -1.,  -1.,  -1.,  -1.,  -1., -10.],
+       [ -1.,  -1.,  -1.,  -1.,  -1., -10.],
+       [ -1.,  -1.,  -1.,  -1.,  -1., -10.],
+       ...,
+       [ -1.,  -1.,  -1.,  -1., -10., -10.],
+       [ -1.,  -1.,  -1.,  -1., -10., -10.],
+       [ -1.,  -1.,  -1.,  -1., -10., -10.]])
+    >>> P, R = hiive.mdptoolbox.example.openai("Taxi-v3", True)
+    +---------+
+    |R: | : :G|
+    | : | : : |
+    | : : : : |
+    | | : | : |
+    |Y| : |B: |
+    +---------+`
+    """
+
+    env = openai_.OpenAI_MDPToolbox(env_name, render, **kwargs)
+    return env.P, env.R
