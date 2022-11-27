@@ -1145,6 +1145,9 @@ class QLearning(MDP):
 
         self.time = _time.time()
 
+        self.best_V = 0
+        self.best_policy = None
+
         # initial state choice
         s = _np.random.randint(0, self.S)
         reset_s = False
@@ -1195,6 +1198,9 @@ class QLearning(MDP):
             self.V = v
             p = self.Q.argmax(axis=1)
             self.policy = p
+            if _np.max(v) > self.best_V:
+                self.best_V = _np.max(v)
+                self.best_policy = p
 
             self.S_freq[s,a] += 1
             run_stats.append(self._build_run_stat(i=n, s=s, a=a, r=r, p=p, v=v, error=error))
@@ -1246,7 +1252,7 @@ class QLearning(MDP):
             self.error_mean.append(_np.mean(error_cumulative))
         if self.run_stats is None or len(self.run_stats) == 0:
             self.run_stats = run_stats
-        return self.run_stats
+        return self.run_stats, self.best_policy
 
     def _build_run_stat(self, i, a, error, p, r, s, v):
         run_stat = {
