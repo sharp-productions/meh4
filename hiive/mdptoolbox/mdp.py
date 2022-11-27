@@ -650,6 +650,8 @@ class PolicyIteration(MDP):
         self.v_mean = []
         self.p_cumulative = []
         self.run_stat_frequency = max(1, max_iter // 10000) if run_stat_frequency is None else run_stat_frequency
+        self.best_policy = self.policy
+        self.best_V = 0
 
         # Do some setup depending on the evaluation type
         if eval_type in (0, "matrix"):
@@ -776,6 +778,7 @@ class PolicyIteration(MDP):
                     print(_MSG_STOP_MAX_ITER)
 
         self.V = policy_V
+
         return policy_V, policy_R, itr
 
     def _evalPolicyMatrix(self):
@@ -854,6 +857,9 @@ class PolicyIteration(MDP):
             # value alone
             policy_next, next_v = self._bellmanOperator()
             error = _np.absolute(next_v - policy_V).max()
+            if _np.max(policy_V) > self.best_V:
+                self.best_V = _np.max(policy_V)
+                self.best_policy = policy_next
             run_stats.append(self._build_run_stat(i=self.iter, s=None, a=None, r=_np.max(policy_V),
                                                   p=policy_next, v=policy_V, error=error))
 
@@ -894,7 +900,7 @@ class PolicyIteration(MDP):
             self.error_mean.append(_np.mean(error_cumulative))
         if self.run_stats is None or len(self.run_stats) == 0:
             self.run_stats = run_stats
-        return self.run_stats
+        return self.run_stats, self.best_policy
 
 
 class PolicyIterationModified(PolicyIteration):
@@ -1581,6 +1587,7 @@ class ValueIteration(MDP):
         self.error_mean = []
         self.p_cumulative = []
         run_stats = []
+        self.best_policy = None
         while True:
             self.iter += 1
             take_run_stat = self.iter % self.run_stat_frequency == 0 or self.iter == self.max_iter
@@ -1588,7 +1595,7 @@ class ValueIteration(MDP):
             Vprev = self.V.copy()
 
             # Bellman Operator: compute policy and value functions
-            self.policy, self.V = self._bellmanOperator()
+            self.policy, self.V = self._bellmanOperator() 
 
             # The values, based on Q. For the function "max()": the option
             # "axis" means the axis along which to operate. In this case it
